@@ -1,26 +1,31 @@
 class Solution {
 public:
-    bool subsetsum(vector<int> &nums, vector<vector<int>> &dp,int n,int target){
-        //base case
-        if(target==0) return true;
-        if(n==0) return false;
-        if(dp[n-1][target]!=-1)
-            return dp[n-1][target];
-        if(nums[n-1]<=target)
-        return dp[n-1][target]=subsetsum(nums,dp,n-1,target-nums[n-1])||subsetsum(nums, dp,n-1,target);
-        else return dp[n-1][target]=subsetsum(nums,dp,n-1,target);
-    }
-
     bool canPartition(vector<int>& nums) {
-        int sum=0;
-        for(int i:nums){
-            sum+=i;
+        int total=0;
+        for (int i : nums)
+            total += i;
+        
+        if (total % 2 != 0)
+            return false;
+        int sum = total / 2;
+
+        int n = nums.size();
+        vector<vector<int>> dp(n + 1, vector<int>(sum + 1));
+        // base case
+        for (int i = 0; i < n + 1; i++) {
+            for (int j = 0; j < sum + 1; j++)
+                if (n == 0)
+                    dp[i][j] = 0;
         }
-        if(sum%2!=0)
-        return false;
-        int target=sum/2;
-        int n=nums.size();
-        vector<vector<int>>dp(n+1,vector<int>(target+1,-1));
-        return subsetsum(nums,dp,n,target);
+        dp[0][0] = 1;
+
+        for (int i = 1; i < n + 1; i++) {
+            for (int j = 0; j < sum + 1; j++)
+                if (nums[i - 1] <= j)
+                    dp[i][j] = dp[i - 1][j - nums[i - 1]] || dp[i - 1][j];
+                else
+                    dp[i][j] = dp[i - 1][j];
+        }
+        return dp[n][sum];
     }
 };
