@@ -1,18 +1,32 @@
 class Solution {
 public:
     vector<int> relativeSortArray(vector<int>& arr1, vector<int>& arr2) {
-         unordered_map<int, int> map;
-        vector<int> tmp, res;
-        for(int i=0;i<arr2.size();i++) map[arr2[i]]=0;
-        for(int i=0;i<arr1.size();i++) {
-            if(map.find(arr1[i])!=map.end()) map[arr1[i]]++;
-            else tmp.push_back(arr1[i]);
+        vector<int> ans;
+        int maxElement = *max_element(arr1.begin(), arr1.end()); // Corrected max_element usage
+        vector<int> v(maxElement + 1, 0); // Ensure we have a place for maxElement
+
+        // Count the occurrences of each element in arr1
+        for(int i = 0; i < arr1.size(); i++) {
+            v[arr1[i]]++;
         }
-        sort(tmp.begin(), tmp.end());
-        for(int i=0;i<arr2.size();i++) {
-            for(int j=0;j<map[arr2[i]];j++) res.push_back(arr2[i]);
+
+        // Add elements to ans in the order they appear in arr2
+        for(int i = 0; i < arr2.size(); i++) {
+            while(v[arr2[i]] > 0) {
+                ans.push_back(arr2[i]);
+                v[arr2[i]]--; // Correct decrement for the specific element
+            }
         }
-        for(int i=0;i<tmp.size();i++) res.push_back(tmp[i]);
-        return res;
+
+        // Add remaining elements that were not in arr2
+        for(int i = 0; i < v.size(); i++) {
+            while(v[i] > 0) {
+                ans.push_back(i); // Add the element itself, not v[i]
+                v[i]--;
+            }
+        }
+
+        return ans;
     }
 };
+
